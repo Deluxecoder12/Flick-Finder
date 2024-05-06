@@ -1,2 +1,2 @@
 # Flick-Finder
-Movie Recommendation system designed as a webpage to help users discover films based on their unique preferences.
+"Flick Finder" aims to offer a robust and user-friendly movie recommendation system while adhering to best practices in software engineering, ensuring reliability, performance, and maintainability.
