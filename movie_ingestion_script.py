@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS movies (
 )
 ''')
 
+
 search = tmdb.Search()
 
 # Loop over alphabet (a-z) to get a sample from each alphabet
@@ -34,7 +35,12 @@ for initial in range(ord('a'), ord('z') + 1):
     letter = chr(initial)
     for page in range(1, 3):  # Get 2 pages per letter (adjust as needed)
         response = search.movie(query=letter, page=page)
-        for movie_data in search.results:
+        for movie_data in response['results']:
+            # Check if movie already in DB
+            cur.execute("SELECT 1 FROM movies WHERE id = ?", (movie_data['id'],))
+            if cur.fetchone():
+                print(f"Skipping movie {movie_data['id']} — already in DB.")
+                continue
             try:
                 movie = tmdb.Movies(movie_data['id'])
                 details = movie.info()
