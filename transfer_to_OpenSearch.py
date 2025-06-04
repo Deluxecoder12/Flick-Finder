@@ -1,17 +1,22 @@
 import sqlite3
 from opensearchpy import OpenSearch, NotFoundError
+from dotenv import load_dotenv
 import sys
+import os
 
+load_dotenv()
 
 # Connect to SQLite
-conn = sqlite3.connect("data/movie_list.db")
+conn = sqlite3.connect(os.getenv("DB_PATH", "data/movie_list.db"))
 cursor = conn.cursor()
 
 # Connect to OpenSearch
 client = OpenSearch(
-    hosts=[{"host": "localhost", "port": 9200}],
-    http_auth=("admin", "admin"),
-    use_ssl=False
+    hosts=[{"host": os.getenv("OPENSEARCH_HOST", "localhost"), "port": int(os.getenv("OPENSEARCH_PORT", 9200))}],
+    http_auth=("admin", os.getenv("OPENSEARCH_PWD")),
+    use_ssl=True,
+    verify_certs=False,  # Please change these for production. I am not responsible for you getting hacked. Maybe I should add that to the README.
+    ssl_show_warn=False
 )
 
 # Define your OpenSearch index name
@@ -66,6 +71,7 @@ for i, row in enumerate(rows, start=1):
         spinner_index += 1
 
 sys.stdout.write("\rIndexing... Done!\n") # print doesn't work always well with \r..No idea why
+sys.stdout.flush()
 
 print(f"{updated} documents updated or created.")
 print(f"{skipped} documents skipped (no changes).")
