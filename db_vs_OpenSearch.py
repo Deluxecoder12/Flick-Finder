@@ -5,11 +5,15 @@
 import sqlite3
 from opensearchpy import OpenSearch
 import time
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # -- CONFIG --
-DB_PATH = "data/movie_list.db"
+DB_PATH = os.getenv("DB_PATH", "data/movie_list.db")
 INDEX_NAME = "movies"
-SEARCH_TERM = "Batman"
+SEARCH_TERM = "Dragon"
 
 # -- Connect to SQLite --
 sqlite_conn = sqlite3.connect(DB_PATH)
@@ -17,9 +21,11 @@ sqlite_cursor = sqlite_conn.cursor()
 
 # -- Connect to OpenSearch --
 client = OpenSearch(
-    hosts=[{"host": "localhost", "port": 9200}],
-    http_auth=("admin", "admin"),
-    use_ssl=False
+    hosts=[{"host": os.getenv("OPENSEARCH_HOST", "localhost"), "port": int(os.getenv("OPENSEARCH_PORT", 9200))}],
+    http_auth=("admin", os.getenv("OPENSEARCH_PWD")),
+    use_ssl=True,
+    verify_certs=False,  # Please change these for production. I am not responsible for you getting hacked. Maybe I should add that to the README.
+    ssl_show_warn=False
 )
 
 # -- Search SQLite --
@@ -43,7 +49,7 @@ opensearch_results = [(hit["_source"]["title"], hit["_score"]) for hit in respon
 end_os = time.time()
 
 # -- Print results summary --
-print(f"🔎 Search term: '{SEARCH_TERM}'")
+print(f"Search term: '{SEARCH_TERM}'")
 print("\nSQLite Results:")
 for r in sqlite_results:
     print(" -", r[0])
