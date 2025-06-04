@@ -36,7 +36,7 @@ updated = 0
 spinner_sequence = ['/', '|', '-', '\\']
 spinner_index = 0
 
-for row in rows:
+for i, row in enumerate(rows, start=1):
     doc = dict(zip(fields, row))
     try:
         doc["id"] = int(doc["id"])
@@ -54,14 +54,11 @@ for row in rows:
             skipped += 1
             continue  # skip unchanged
     except NotFoundError:
-        pass  # Not in OpenSearch, so index it
+        pass  # Document not found — proceed to index
 
-    # Index into OpenSearch
     client.index(index=index_name, id=doc["id"], body=doc)
     updated += 1
 
-    # Print progress
-    i = rows.index(row) + 1
     if i % 50 == 0 or i == len(rows):
         spinner_char = spinner_sequence[spinner_index % len(spinner_sequence)]
         sys.stdout.write(f"\rIndexing... {spinner_char}")
