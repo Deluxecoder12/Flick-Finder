@@ -8,20 +8,19 @@ router = APIRouter()
 
 load_dotenv()
 
-# -- Connect to OpenSearch --
-client = OpenSearch(
-    hosts=[{"host": os.getenv("OPENSEARCH_HOST", "localhost"), "port": int(os.getenv("OPENSEARCH_PORT", 9200))}],
-    http_auth=("admin", os.getenv("OPENSEARCH_PWD")),
-    use_ssl=True,
-    verify_certs=False,  # Please change these for production. I am not responsible for you getting hacked. Maybe I should add that to the README.
-    ssl_show_warn=False
-)
-
 @router.get("/")
 def search_movies(q: str = Query(..., min_length=1, description="Search query for movies")):
     """
     Search for movies based on a query string.
     """
+    # -- Connect to OpenSearch --
+    client = OpenSearch(
+        hosts=[{"host": os.getenv("OPENSEARCH_HOST", "localhost"), "port": int(os.getenv("OPENSEARCH_PORT", 9200))}],
+        http_auth=("admin", os.getenv("OPENSEARCH_PWD")),
+        use_ssl=True,
+        verify_certs=False,  # Please change these for production. I am not responsible for you getting hacked. Maybe I should add that to the README.
+        ssl_show_warn=False
+    )
 
     if not client:
         raise HTTPException(status_code=503, detail="Search engine not available")
