@@ -1,5 +1,5 @@
 # Grabs movie details from db
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, HTTPException
 from dotenv import load_dotenv
 import os
 import sqlite3
@@ -16,6 +16,7 @@ def get_movie(movie_id: int):
     try:
         # -- Connect to SQLite --
         conn = sqlite3.connect(os.getenv("DB_PATH", "data/movie_list.db"))
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
         cursor.execute("""
