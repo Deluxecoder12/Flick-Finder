@@ -16,4 +16,3 @@ app.include_router(movie.router, prefix="/movie", tags=["Movie Info"])
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Flick Finder API"}
-
