@@ -27,12 +27,12 @@ if not client.indices.exists(index=index_name):
     client.indices.create(index=index_name)
 
 # Fetch all rows from the SQLite DB
-cursor.execute("SELECT id, title, genres, runtime_mins, release_date, original_language, popularity, hash FROM movies")
+cursor.execute("SELECT id, title, overview, genres, runtime_mins, release_date, original_language, popularity, hash FROM movies")
 rows = cursor.fetchall()
 
 # Define OpenSearch fields
 fields = [
-    "id", "title", "genres", "runtime_mins",
+    "id", "title", "overview", "genres", "runtime_mins",
     "release_date", "original_language", "popularity", "hash"
 ]
 
