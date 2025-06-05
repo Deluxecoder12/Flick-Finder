@@ -27,18 +27,18 @@ if not client.indices.exists(index=index_name):
     client.indices.create(index=index_name)
 
 # Fetch all rows from the SQLite DB
-cursor.execute("SELECT id, title, overview, genres, runtime_mins, release_date, original_language, poster_path, popularity, hash FROM movies")
+cursor.execute("SELECT id, title, genres, runtime_mins, release_date, original_language, popularity, hash FROM movies")
 rows = cursor.fetchall()
 
 # Define OpenSearch fields
 fields = [
-    "id", "title", "overview", "genres", "runtime_mins",
-    "release_date", "original_language", "poster_path", "popularity", "hash"
+    "id", "title", "genres", "runtime_mins",
+    "release_date", "original_language", "popularity", "hash"
 ]
 
 skipped = 0
 updated = 0
-spinner_sequence = ['/', '|', '-', '\\']
+spinner_sequence = ['/', '-', '\\', '|']
 spinner_index = 0
 
 for i, row in enumerate(rows, start=1):
